@@ -1,5 +1,7 @@
 SELECT * FROM actor a WHERE EXISTS (
-    SELECT * FROM actor a2 WHERE a.last_name = a2.last_name
+    SELECT * FROM actor a2 
+    WHERE a.last_name = a2.last_name
+    AND a.actor_id  <> a2.actor_id 
 ) ORDER  BY a.last_name
 ;
 

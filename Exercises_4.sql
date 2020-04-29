@@ -1,5 +1,7 @@
 USE sakila;
 
+
+#exist
 SELECT title, special_features 
 	FROM film f
 	WHERE rating = "PG-13"
@@ -10,6 +12,7 @@ SELECT DISTINCT `length`
 	ORDER BY `length` 
 ;
 
+#exist
 SELECT title, rental_rate, replacement_cost 
 	FROM film f 
 	WHERE replacement_cost BETWEEN 20.00 AND 24.00
@@ -37,8 +40,13 @@ SELECT a.address, c.city, co.country
 	AND c.country_id = co.country_id 
 ;	
  
-#select 7
+SELECT f.title, f2.title, f.rating 
+	FROM film f, film f2 
+	WHERE f.rating = f2.rating 
+	AND f.film_id <> f2.film_id
+;
 
+#exist
 SELECT f.title, s.first_name, s.last_name 
 	FROM inventory i, film f, staff s, store st
 	WHERE st.manager_staff_id = s.staff_id 
