@@ -13,28 +13,30 @@ JOIN country
 		USING(country_id)
 WHERE
 	country = 'United States') , 1, CURRENT_TIMESTAMP);
+
+--1 cba--
+
+INSERT INTO customer
+	(store_id, first_name, last_name, email, address_id, active, create_date, last_update)
+	SELECT 1, 'ALICE', 'SMITH', 'test@domain.com', MAX(address_id), 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM address
+		INNER JOIN city USING (city_id)
+		INNER JOIN country USING (country_id)
+		WHERE country = 'United States'
+;
 	
 --2--
 
 INSERT INTO rental
 (rental_date, inventory_id, customer_id, return_date, staff_id, last_update)
 VALUES('12/12/12', (
-SELECT
-	MAX(inventory_id) 
-from
-	inventory 
-JOIN film f
-		USING(film_id)
-WHERE
-	f.title = 'ACADEMY DINOSAUR'), 1, '12/12/12',(
-SELECT
-	staff_id 
-from
-	staff s
-JOIN store st
-		USING(store_id)
-WHERE
-	store_id = 2) , CURRENT_TIMESTAMP);
+	SELECT MAX(inventory_id) 
+	from inventory 
+	JOIN film f	USING(film_id)
+	WHERE f.title = 'ACADEMY DINOSAUR'), 1, '12/12/12',(
+	SELECT staff_id 
+	from staff s
+	JOIN store st USING(store_id)
+	WHERE store_id = 2 LIMIT 1) , CURRENT_TIMESTAMP);
 
 --3--
 
@@ -54,6 +56,19 @@ UPDATE film set
 	release_year = 2004
 where rating = "R";
 
+--3 cba--
+
+UPDATE film 
+	SET release_year = (CASE
+		WHEN rating = 'PG' THEN 2001
+		WHEN rating = 'G' THEN 2002
+		WHEN rating = 'NC-17' THEN 2003
+		WHEN rating = 'PG-13' THEN 2004
+		WHEN rating = 'R' THEN 2005
+		ELSE release_year
+	END)
+	WHERE rating IN ('PG', 'G', 'NC-17', 'PG-13', 'R');
+
 --4--
 
 SET @num_id = (select i.inventory_id
@@ -68,6 +83,13 @@ UPDATE rental
 SET return_date=current_timestamp , last_update=CURRENT_TIMESTAMP
 WHERE inventory_id = @num_id
 ; 
+
+--4 cba--
+
+UPDATE rental 
+	SET return_date = CURRENT_TIMESTAMP
+	WHERE rental_id = (SELECT * FROM (SELECT max(rental_id) 
+				FROM rental WHERE return_date IS NULL) rental);
 
 --5--
 
@@ -92,8 +114,7 @@ WHERE rental_id IN (SELECT
 	rental_id FROM rental
 	JOIN inventory i USING (inventory_id)
 	WHERE i.film_id = 5
-)
-;
+);
 
 DELETE FROM rental
 WHERE inventory_id IN (SELECT 
