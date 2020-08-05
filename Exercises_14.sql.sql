@@ -5,20 +5,22 @@ SELECT CONCAT(first_name, " ",last_name), address, city
 	JOIN address using(address_id)
 	JOIN city using(city_id)
 	JOIN country using(country_id)
-	WHERE country.country LIKE BINARY "Argentina"
+	WHERE country LIKE BINARY "%Argentina%"
 ;
 
 -- 2 -- 
 
-SELECT title, release_year,
+SELECT title, l.name, release_year,
 	CASE
 		WHEN rating LIKE "G" THEN "General Public"
 		WHEN rating LIKE "PG" THEN "Parental Guidance Suggested"
 		WHEN rating LIKE "PG-13" THEN "Parents Strongly Cautioned"
 		WHEN rating LIKE "R" THEN "Restricted"
 		WHEN rating LIKE "NC-17" THEN "Adults Only"
+		ELSE rating 
 		end as rating 
 	FROM film f
+	INNER JOIN `language` l using(language_id)
 ;
 	
 -- 3 --
@@ -30,20 +32,27 @@ SELECT title
 	WHERE MATCH( actor.first_name, actor.last_name ) against('penelope' in natural language mode)
 ;
 
+SELECT title, actor.first_name 
+	FROM film f
+	JOIN film_actor USING(film_id)
+	JOIN actor USING(actor_id)
+	WHERE UPPER(CONCAT(actor.first_name," ", actor.last_name)) = UPPER(TRIM(' Penelope Guiness'))
+;
+
 -- 4 --
 
-SELECT title, concat(first_name, " ", last_name) as "Cliente",
+SELECT title, concat(first_name, " ", last_name) as "Cliente", r.rental_date,
 	CASE 
 		WHEN rental_date is null then "No"
 		ELSE "Yes"
 		END as "Devuelto"
 	FROM customer 
-	JOIN rental	using(customer_id)
+	JOIN rental r	using(customer_id)
 	JOIN inventory using(inventory_id)
 	JOIN film using(film_id)
-	WHERE month(return_date) > 3 and month(return_date) < 6;
+	WHERE month(return_date) IN (5, 6) 
+;
 	
-
 -- 5 --
 
 -- The CAST function is ANSI standard and is compatible to use in other databases while the CONVERT function is a specific function of the SQL server.
