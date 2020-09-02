@@ -82,7 +82,7 @@ ALTER TABLE employees
 ALTER TABLE employees 
   ADD lastUpdate DATETIME DEFAULT CURRENT_TIMESTAMP
   
-CREATE TRIGGER before_employees_update_inserts 
+CREATE TRIGGER before_employees_update 
 	BEFORE UPDATE OR INSERT ON employees
 	FOR EACH ROW
  	BEGIN
@@ -90,8 +90,11 @@ CREATE TRIGGER before_employees_update_inserts
 	END
 ;
 
+
 -- 6 --
 
 SELECT name, is_instead_of_trigger
 FROM sakila.film_text 
 WHERE type = 'TR';
+
+SHOW TRIGGERS;
