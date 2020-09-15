@@ -1,3 +1,8 @@
+SET GLOBAL query_cache_size = 0;
+SHOW VARIABLES LIKE 'query_cache_size';
+SET GLOBAL query_cache_size = 1000000;
+
+SHOW VARIABLES LIKE 'have_query_cache';
 -- 1 --
 SELECT a.address 
 	FROM address a
