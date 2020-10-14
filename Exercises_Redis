@@ -1,0 +1,59 @@
+
+2
+docker exec -it redis /bin/sh
+redis-cli
+ping
+CONFIG GET *
+
+3
+SET number 5
+EXISTS number
+RANDOMKEY
+DEL number
+
+4
+HMSET example esto "contiene esto" myname "franco"
+HGET example myname
+HGETALL example
+HKEYS example
+HDEL example esto myname
+
+5
+RPUSH numbers 1
+RPUSH numbers 2
+RPUSH numbers 3
+LPUSH numbers 0
+LRANGE numbers 0 -1
+LSET numbers 1 hola
+RPOP numbers
+RPUSHX numbers 2
+
+6
+SADD example hola
+SADD example estonoserepite
+SADD example estonoserepite
+SMEMBERS example
+SPOP example
+	
+7
+ZADD example 1 hola
+ZADD example 2 hola2
+ZADD example 3 hola3
+ZRANGE example 0 -1
+ZADD example 0 hola0
+ZRANGE example 0 -1
+
+8
+en una terminal
+subscribe molinamessage
+
+en otra
+publish molinamessage "hola"
+
+9
+multi
+LPUSH a 1
+LPUSH a 2
+LPUSH a 3
+LRANGE numbers 0 -1
+EXEC
